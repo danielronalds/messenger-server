@@ -5,6 +5,8 @@ WORKDIR /app
 
 COPY go.mod ./go.mod
 COPY main.go ./main.go
+COPY db/ ./db/
+COPY resources/ ./resources/
 
 RUN go mod tidy
 RUN go build -o ./main .
@@ -14,6 +16,7 @@ RUN go build -o ./main .
 FROM debian:stable-slim as runner
 WORKDIR /app
 COPY --from=builder /app/main .
+COPY .env ./.env
 
 EXPOSE 8080
 
