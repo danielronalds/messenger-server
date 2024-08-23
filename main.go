@@ -22,6 +22,7 @@ func main() {
 	e.Use(middleware.Logger())
 
 	e.GET("/users", resources.GetUsers)
+	e.POST("/users", resources.CreateUser)
 
 	port := fmt.Sprintf(":%v", os.Getenv("SERVER_PORT"))
 	fmt.Println(port)
