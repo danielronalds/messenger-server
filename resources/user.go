@@ -8,7 +8,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-
 func GetUsers(c echo.Context) error {
 	pg := db.GetDatabase()
 

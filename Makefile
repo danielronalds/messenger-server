@@ -15,3 +15,6 @@ stop:
 
 clean:
 	docker compose down -v
+
+fmt:
+	go fmt github.com/danielronalds/...

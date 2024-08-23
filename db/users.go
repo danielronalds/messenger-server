@@ -1,4 +1,4 @@
-package db;
+package db
 
 // This file contains the db logics concerning the Users table
 
