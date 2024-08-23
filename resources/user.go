@@ -8,18 +8,11 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type user struct {
-	Id          int
-	UserName    string
-	DisplayName string
-}
 
 func GetUsers(c echo.Context) error {
 	pg := db.GetDatabase()
 
-	users := []user{}
-
-	err := pg.Select(&users, "SELECT Id, UserName, DisplayName FROM api.Users")
+	users, err := pg.GetUsers()
 
 	if err != nil {
 		c.String(http.StatusInternalServerError, "Failed to fetch Users")
