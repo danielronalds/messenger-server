@@ -19,7 +19,7 @@ func (pg Postgres) GetUsers() ([]User, error) {
 	return users, err
 }
 
-func (pg Postgres) CreateUser(username string, displayName string, password string) (User, error) {
+func (pg Postgres) CreateUser(username, displayName, password string) (User, error) {
 	newUser := User{}
 
 	query := `INSERT INTO api.Users (UserName, DisplayName, Password) VALUES ($1, $2, $3) RETURNING Id, UserName, DisplayName`
