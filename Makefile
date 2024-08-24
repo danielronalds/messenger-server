@@ -18,3 +18,6 @@ clean:
 
 fmt:
 	go fmt github.com/danielronalds/...
+
+test:
+	go test github.com/danielronalds/...

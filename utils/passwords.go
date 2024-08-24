@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/rand"
 	"errors"
+	"runtime"
 
 	"golang.org/x/crypto/argon2"
 )
@@ -42,6 +43,11 @@ type Hash struct {
 	memory  uint32
 	threads uint8
 	keyLen  uint32
+}
+
+// Generates the default hash configuration
+func DefaultHash() *Hash {
+	return NewHash(4, 128*1024, uint8(runtime.NumCPU()), 32)
 }
 
 // Generates a new Hash struct
@@ -85,5 +91,5 @@ func (h Hash) Compare(hash, salt, password []byte) (bool, error) {
 		return false, err
 	}
 
-	return bytes.Equal(hashedPassword.Hash(), password), nil
+	return bytes.Equal(hashedPassword.Hash(), hash), nil
 }
