@@ -1,4 +1,4 @@
-package passwords
+package security
 
 import "testing"
 

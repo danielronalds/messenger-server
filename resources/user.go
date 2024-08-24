@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/danielronalds/messenger-server/db"
+	"github.com/danielronalds/messenger-server/utils/security"
 	"github.com/labstack/echo/v4"
 )
 
@@ -40,7 +41,7 @@ func CreateUser(c echo.Context) error {
 	user := new(postedUser)
 
 	if err := c.Bind(&user); err != nil {
-		log.Printf("Failed to bind posted user")
+		log.Printf("Failed to bind posted user: %v", err.Error())
 		return c.String(http.StatusBadRequest, err.Error())
 	}
 
@@ -48,7 +49,18 @@ func CreateUser(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "A field was either missing or blank!")
 	}
 
-	newUser, err := db.GetDatabase().CreateUser(user.UserName, user.DisplayName, user.Password)
+	hasher := security.DefaultHash()
+
+	hashedPassword, err := hasher.GenerateNewHash([]byte(user.Password))
+
+	if err != nil {
+		log.Printf("Failed to generate a hash: %v", err.Error())
+		return c.String(http.StatusInternalServerError, "Failed to generate a hash")
+	}
+
+	pg := db.GetDatabase()
+
+	newUser, err := pg.CreateUser(user.UserName, user.DisplayName, hashedPassword.Hash(), hashedPassword.Salt())
 	if err != nil {
 		log.Printf("Failed to create user: %v", err.Error())
 		return c.String(http.StatusInternalServerError, "Failed to create user")

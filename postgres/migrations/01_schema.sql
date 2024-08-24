@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS api.Users (
     Id          SERIAL PRIMARY KEY,
     UserName    VARCHAR(50) NOT NULL,
     DisplayName VARCHAR(50) NOT NULL,
-    Password    VARCHAR(50) NOT NULL -- NOTE: May need to adjust this based on the size of the hash
+    Password    bytea NOT NULL,
+    Salt        bytea NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS api.Messages (
