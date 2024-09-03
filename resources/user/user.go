@@ -1,4 +1,4 @@
-package resources
+package user
 
 import (
 	"log"
@@ -21,24 +21,8 @@ func GetUsers(c echo.Context) error {
 	return c.JSON(http.StatusOK, users)
 }
 
-// A struct to represent the JSON posted to the CreateUser endpoint
-type postedUser struct {
-	UserName    string
-	DisplayName string
-	Password    string
-}
-
-// A method to check whether the user object recieved in the POST request is valid
-func (u postedUser) isValid() bool {
-	trimmedUserName := strings.TrimSpace(u.UserName)
-	trimmedDisplayName := strings.TrimSpace(u.DisplayName)
-	trimmedPassword := strings.TrimSpace(u.Password)
-
-	return len(trimmedUserName) > 0 && len(trimmedDisplayName) > 0 && len(trimmedPassword) > 0
-}
-
 func CreateUser(c echo.Context) error {
-	user := new(postedUser)
+	user := new(postedNewUser)
 
 	if err := c.Bind(&user); err != nil {
 		log.Printf("Failed to bind posted user: %v", err.Error())
@@ -51,7 +35,7 @@ func CreateUser(c echo.Context) error {
 
 	hasher := security.DefaultHash()
 
-	hashedPassword, err := hasher.GenerateNewHash([]byte(user.Password))
+	hashedPassword, err := hasher.GenerateNewHash([]byte(strings.TrimSpace(user.Password)))
 
 	if err != nil {
 		log.Printf("Failed to generate a hash: %v", err.Error())

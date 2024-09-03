@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/danielronalds/messenger-server/resources"
+	"github.com/danielronalds/messenger-server/resources/user"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -21,8 +21,8 @@ func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
 
-	e.GET("/users", resources.GetUsers)
-	e.POST("/users", resources.CreateUser)
+	e.GET("/users", user.GetUsers)
+	e.POST("/users", user.CreateUser)
 
 	port := fmt.Sprintf(":%v", os.Getenv("SERVER_PORT"))
 	fmt.Println(port)
