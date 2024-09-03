@@ -12,11 +12,11 @@ import (
 // The length of salts used
 //
 // Recommended in the docs: https://github.com/alexedwards/argon2id
-const saltLen uint32 = 16
+const defaultSaltLen uint32 = 16
 
 // Generates a Salt to use alongside a password to hash it
-func generateSalt() ([]byte, error) {
-	salt := make([]byte, saltLen)
+func generateSalt(len uint32) ([]byte, error) {
+	salt := make([]byte, len)
 
 	_, err := rand.Read(salt)
 
@@ -61,7 +61,7 @@ func (h Hash) GenerateNewHash(password []byte) (*HashedPassword, error) {
 		return nil, errors.New("Password length is 0!")
 	}
 
-	salt, err := generateSalt()
+	salt, err := generateSalt(defaultSaltLen)
 
 	if err != nil {
 		return nil, err
