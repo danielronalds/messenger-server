@@ -8,6 +8,7 @@ COPY main.go ./main.go
 COPY db/ ./db/
 COPY resources/ ./resources/
 COPY utils/ ./utils/
+COPY stores/ ./stores/
 
 RUN go mod tidy
 RUN go build -o ./main .

@@ -1,5 +1,9 @@
 package db
 
+import (
+	"github.com/danielronalds/messenger-server/utils/security"
+)
+
 // This file contains the db logics concerning the Users table
 
 // This struct represents a User object from the DB.
@@ -27,4 +31,40 @@ func (pg Postgres) CreateUser(username, displayName string, hashedPassword, salt
 	err := pg.connection.Get(&newUser, query, username, displayName, hashedPassword, salt)
 
 	return newUser, err
+}
+
+func (pg Postgres) getSalt(id int) ([]byte, error) {
+	salt := []byte{}
+
+	query := `SELECT Salt FROM api.Users WHERE Id = $1`
+
+	err := pg.connection.Get(&salt, query, id)
+
+	return salt, err
+}
+
+func (pg Postgres) DeleteUser(id int, password string) (int64, error) {
+	hasher := security.DefaultHash()
+
+	salt, err := pg.getSalt(id)
+
+	if err != nil {
+		return 0, err
+	}
+
+	hashedPass, err := hasher.GenerateHash([]byte(password), salt)
+
+	if err != nil {
+		return 0, err
+	}
+
+	query := `DELETE FROM api.Users WHERE Id = $1 AND Password = $2`
+
+	result, err := pg.connection.Exec(query, id, hashedPass)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
 }
