@@ -11,7 +11,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func GetUsers(c echo.Context) error {
+		func GetUsers(c echo.Context) error {
 	users, err := db.GetDatabase().GetUsers()
 
 	if err != nil {
