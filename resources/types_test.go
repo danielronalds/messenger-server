@@ -1,4 +1,4 @@
-package user
+package resources
 
 import (
 	"testing"
@@ -6,7 +6,7 @@ import (
 	"github.com/danielronalds/messenger-server/utils"
 )
 
-var defaultPostedNewUser postedNewUser = postedNewUser {
+var defaultPostedNewUser PostedNewUser = PostedNewUser {
 	UserName: "unicornr14",
 	DisplayName: "Unicorn",
 	Password: "p@$$w0rd!",
@@ -47,7 +47,7 @@ func TestValidNewUserTypeMissingPassword(t *testing.T) {
 	}
 }
 
-var defaultPostedUser postedUser = postedUser {
+var defaultPostedUser PostedUser = PostedUser {
 	UserName: "unicornr14",
 	Password: "p@$$w0rd!",
 }

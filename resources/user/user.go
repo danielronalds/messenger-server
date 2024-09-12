@@ -7,6 +7,7 @@ import (
 
 	"github.com/danielronalds/messenger-server/db"
 	"github.com/danielronalds/messenger-server/utils/security"
+	"github.com/danielronalds/messenger-server/resources"
 	"github.com/labstack/echo/v4"
 )
 
@@ -22,14 +23,14 @@ func GetUsers(c echo.Context) error {
 }
 
 func CreateUser(c echo.Context) error {
-	user := new(postedNewUser)
+	user := new(resources.PostedNewUser)
 
 	if err := c.Bind(&user); err != nil {
 		log.Printf("Failed to bind posted user: %v", err.Error())
 		return c.String(http.StatusBadRequest, err.Error())
 	}
 
-	if !user.isValid() {
+	if !user.IsValid() {
 		return c.String(http.StatusBadRequest, "A field was either missing or blank!")
 	}
 

@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/danielronalds/messenger-server/resources/auth"
 	"github.com/danielronalds/messenger-server/resources/user"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
@@ -23,6 +24,8 @@ func main() {
 
 	e.GET("/users", user.GetUsers)
 	e.POST("/users", user.CreateUser)
+
+	e.POST("/auth", auth.Login)
 
 	port := fmt.Sprintf(":%v", os.Getenv("SERVER_PORT"))
 	fmt.Println(port)

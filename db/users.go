@@ -23,6 +23,30 @@ func (pg Postgres) GetUsers() ([]User, error) {
 	return users, err
 }
 
+func (pg Postgres) GetUserWithPass(id int, password string) (User, error) {
+	hasher := security.DefaultHash()
+
+	salt, err := pg.getSalt(id)
+
+	if err != nil {
+		return User{}, err
+	}
+
+	hashedPass, err := hasher.GenerateHash([]byte(password), salt)
+
+	if err != nil {
+		return User{}, err
+	}
+
+	user := User{}
+
+	query := `SELECT Id, UserName, DisplayName FROM api.Users WHERE Id = $1 AND Password = $2`
+
+	err = pg.connection.Get(&user, query, id, hashedPass.Hash())
+
+	return user, err
+}
+
 func (pg Postgres) CreateUser(username, displayName string, hashedPassword, salt []byte) (User, error) {
 	newUser := User{}
 
@@ -60,7 +84,7 @@ func (pg Postgres) DeleteUser(id int, password string) (int64, error) {
 
 	query := `DELETE FROM api.Users WHERE Id = $1 AND Password = $2`
 
-	result, err := pg.connection.Exec(query, id, hashedPass)
+	result, err := pg.connection.Exec(query, id, hashedPass.Hash())
 
 	if err != nil {
 		return 0, err
