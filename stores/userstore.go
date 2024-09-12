@@ -22,7 +22,7 @@ type UserStore struct {
 }
 
 func GetUserStore() *UserStore {
-	if userStore != nil {
+			if userStore != nil {
 		return userStore
 	}
 
