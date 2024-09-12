@@ -6,10 +6,10 @@ import (
 	"github.com/danielronalds/messenger-server/utils"
 )
 
-var defaultPostedNewUser PostedNewUser = PostedNewUser {
-	UserName: "unicornr14",
+var defaultPostedNewUser PostedNewUser = PostedNewUser{
+	UserName:    "unicornr14",
 	DisplayName: "Unicorn",
-	Password: "p@$$w0rd!",
+	Password:    "p@$$w0rd!",
 }
 
 func TestValidNewUserTypeValid(t *testing.T) {
@@ -47,7 +47,7 @@ func TestValidNewUserTypeMissingPassword(t *testing.T) {
 	}
 }
 
-var defaultPostedUser PostedUser = PostedUser {
+var defaultPostedUser PostedUser = PostedUser{
 	UserName: "unicornr14",
 	Password: "p@$$w0rd!",
 }

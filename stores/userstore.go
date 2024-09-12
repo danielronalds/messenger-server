@@ -45,13 +45,13 @@ func (s UserStore) CreateSession(userId int, username string) (string, error) {
 	sessionKey, err := security.GenerateSessionKey()
 
 	if err != nil {
-		return "", err;
+		return "", err
 	}
 
 	for !s.uniqueSessionKey(sessionKey) {
 		sessionKey, err = security.GenerateSessionKey()
 		if err != nil {
-			return "", err;
+			return "", err
 		}
 	}
 

@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	"github.com/danielronalds/messenger-server/db"
-	"github.com/danielronalds/messenger-server/utils/security"
 	"github.com/danielronalds/messenger-server/resources"
+	"github.com/danielronalds/messenger-server/utils/security"
 	"github.com/labstack/echo/v4"
 )
 

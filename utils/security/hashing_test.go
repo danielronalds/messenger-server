@@ -1,8 +1,8 @@
 package security
 
 import (
-	"testing"
 	"github.com/danielronalds/messenger-server/utils"
+	"testing"
 )
 
 func TestPasswordHashingRightPassword(t *testing.T) {
@@ -11,7 +11,7 @@ func TestPasswordHashingRightPassword(t *testing.T) {
 	hasher := DefaultHash()
 
 	hashedPass, err := hasher.GenerateNewHash([]byte(password))
-	
+
 	utils.HandleTestingError(t, err)
 
 	correctPass, err := hasher.Compare(hashedPass.hash, hashedPass.salt, []byte(password))
