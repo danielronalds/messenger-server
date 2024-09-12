@@ -22,3 +22,6 @@ jobs:
 
     - name: Test
       run: go test -v github.com/danielronalds/...
+
+    - name: Format Check
+      uses: Jerome1337/gofmt-action@v1.0.5
