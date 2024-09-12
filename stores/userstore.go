@@ -8,10 +8,10 @@ import (
 
 // A struct to represents a user's logged in session
 type UserSession struct {
-	sessionKey string
-	userId     int
-	userName   string
-	startTime  time.Time
+	SessionKey string
+	UserId     int
+	Username   string
+	StartTime  time.Time
 }
 
 var userStore *UserStore
@@ -35,12 +35,12 @@ func GetUserStore() *UserStore {
 
 func (s UserStore) uniqueSessionKey(key string) bool {
 	session := s.sessions[key]
-	return session.sessionKey == ""
+	return session.SessionKey == ""
 }
 
 // Creates a session for the given user.
 //
-// NOTE: This does not communicate with the database, it is expected that the endpoint will do this
+// NOTE: This does not communicate with the database, it is expected that the caller will do this
 func (s UserStore) CreateSession(userId int, username string) (string, error) {
 	sessionKey, err := security.GenerateSessionKey()
 
@@ -56,13 +56,24 @@ func (s UserStore) CreateSession(userId int, username string) (string, error) {
 	}
 
 	session := UserSession{
-		sessionKey: sessionKey,
-		userId:     userId,
-		userName:   username,
-		startTime:  time.Now(),
+		SessionKey: sessionKey,
+		UserId:     userId,
+		Username:   username,
+		StartTime:  time.Now(),
 	}
 
 	s.sessions[sessionKey] = session
 
 	return sessionKey, nil
+}
+
+// Gets the user session associated with the given key, returning nil if the key is invalid
+func (s UserStore) GetSession(sessionKey string) *UserSession {
+	session := s.sessions[sessionKey]
+
+	if session.SessionKey == "" {
+		return nil
+	}
+
+	return &session
 }
