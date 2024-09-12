@@ -19,3 +19,19 @@ Expected Body
   "Password": "terrible-password" 
 }
 ```
+
+## Auth Endpoints
+
+> `POST /auth`
+
+Creates a user session, returning a session key if
+authentication is successful
+
+Expected Body
+
+```json
+{
+  "Id": 0,
+  "Password": "terrible-password"
+}
+```
