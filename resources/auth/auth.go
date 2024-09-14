@@ -11,8 +11,8 @@ import (
 )
 
 type LoginReturn struct {
-	Key         string
-	DisplayName string
+	Key         string `json:"key"`
+	DisplayName string `json:"displayname"`
 }
 
 func Login(c echo.Context) error {
