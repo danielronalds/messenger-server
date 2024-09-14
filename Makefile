@@ -21,3 +21,6 @@ fmt:
 
 test:
 	go test github.com/danielronalds/...
+
+ls:
+	cat Makefile
