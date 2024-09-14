@@ -32,7 +32,6 @@ Expected Body
   "Password": "terrible-password"
 }
 ```
-```
 
 > `POST /users`
 
