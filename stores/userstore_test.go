@@ -7,12 +7,11 @@ import (
 )
 
 func TestUserStoreCreateAndReadSession(t *testing.T) {
-	userId := 0
 	userName := "TestUser"
 
 	store := GetUserStore()
 
-	sessionKey, err := store.CreateSession(userId, userName)
+	sessionKey, err := store.CreateSession(userName)
 	utils.HandleTestingError(t, err)
 
 	// Fetching a new user store to test singleton implementation
@@ -24,7 +23,7 @@ func TestUserStoreCreateAndReadSession(t *testing.T) {
 		t.Fatal("Failed to retrieve created session")
 	}
 
-	if session.UserId != userId || session.Username != userName {
+	if session.Username != userName {
 		t.Fatalf("Session details did not match\n%v", utils.PrettyString(session))
 	}
 }
