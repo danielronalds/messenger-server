@@ -20,6 +20,7 @@ func main() {
 	}
 
 	e := echo.New()
+	e.Use(middleware.CORS())
 	e.Use(middleware.Logger())
 
 	e.GET("/users", user.GetUsers)
