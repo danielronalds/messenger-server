@@ -31,14 +31,3 @@ func (u PostedNewUser) IsValid() bool {
 
 	return len(trimmedUserName) > 0 && len(trimmedDisplayName) > 0 && len(trimmedPassword) > 0
 }
-
-type LoginAttempt struct {
-	Id       int
-	Password string
-}
-
-func (l LoginAttempt) IsValid() bool {
-	trimmedPassword := strings.TrimSpace(l.Password)
-
-	return len(trimmedPassword) > 0 && l.Id >= 0
-}

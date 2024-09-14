@@ -9,7 +9,6 @@ import (
 // A struct to represents a user's logged in session
 type UserSession struct {
 	SessionKey string
-	UserId     int
 	Username   string
 	StartTime  time.Time
 }
@@ -41,7 +40,7 @@ func (s UserStore) uniqueSessionKey(key string) bool {
 // Creates a session for the given user.
 //
 // NOTE: This does not communicate with the database, it is expected that the caller will do this
-func (s UserStore) CreateSession(userId int, username string) (string, error) {
+func (s UserStore) CreateSession(username string) (string, error) {
 	sessionKey, err := security.GenerateSessionKey()
 
 	if err != nil {
@@ -57,7 +56,6 @@ func (s UserStore) CreateSession(userId int, username string) (string, error) {
 
 	session := UserSession{
 		SessionKey: sessionKey,
-		UserId:     userId,
 		Username:   username,
 		StartTime:  time.Now(),
 	}

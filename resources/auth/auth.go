@@ -11,18 +11,18 @@ import (
 )
 
 func Login(c echo.Context) error {
-	loginDetails := new(resources.LoginAttempt)
+	postedUser := new(resources.PostedUser)
 
-	if err := c.Bind(&loginDetails); err != nil {
+	if err := c.Bind(&postedUser); err != nil {
 		log.Printf("Failed to bind login details: %v", err.Error())
 		return c.String(http.StatusBadRequest, err.Error())
 	}
 
-	if !loginDetails.IsValid() {
+	if !postedUser.IsValid() {
 		return c.String(http.StatusBadRequest, "Login details were not valid!")
 	}
 
-	dbUser, err := db.GetDatabase().GetUserWithPass(loginDetails.Id, loginDetails.Password)
+	dbUser, err := db.GetDatabase().GetUserWithPass(postedUser.UserName, postedUser.Password)
 
 	if err != nil {
 		log.Printf("Failed to fetch user with login: %v", err.Error())
@@ -30,7 +30,7 @@ func Login(c echo.Context) error {
 	}
 
 	// Create a session
-	sessionKey, err := stores.GetUserStore().CreateSession(dbUser.Id, dbUser.DisplayName)
+	sessionKey, err := stores.GetUserStore().CreateSession(dbUser.UserName)
 
 	if err != nil {
 		log.Printf("Failed to create login session")

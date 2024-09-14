@@ -1,8 +1,7 @@
 CREATE SCHEMA api;
 
 CREATE TABLE IF NOT EXISTS api.Users (
-    Id          SERIAL PRIMARY KEY,
-    UserName    VARCHAR(50) NOT NULL,
+    UserName    VARCHAR(50) NOT NULL PRIMARY KEY,
     DisplayName VARCHAR(50) NOT NULL,
     Password    bytea NOT NULL,
     Salt        bytea NOT NULL
