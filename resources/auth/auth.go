@@ -10,6 +10,11 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+type LoginReturn struct {
+	Key         string
+	DisplayName string
+}
+
 func Login(c echo.Context) error {
 	postedUser := new(resources.PostedUser)
 
@@ -38,5 +43,8 @@ func Login(c echo.Context) error {
 	}
 
 	// Return session key to user
-	return c.String(http.StatusOK, sessionKey)
+	return c.JSON(http.StatusOK, LoginReturn{
+		Key:         sessionKey,
+		DisplayName: dbUser.DisplayName,
+	})
 }
