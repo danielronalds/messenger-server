@@ -11,8 +11,8 @@ Gets all registered users
 ```json
 [
   {
-    "UserName": "example-user",
-    "DisplayName": "Example",
+    "username": "example-user",
+    "displayname": "Example",
   }
 ]
 ```
@@ -25,9 +25,9 @@ Creates a new user
 
 ```json
 { 
-  "UserName": "example-user", 
-  "DisplayName": "Example", 
-  "Password": "terrible-password" 
+  "username": "example-user", 
+  "displayname": "Example", 
+  "password": "terrible-password" 
 }
 ```
 
@@ -51,8 +51,8 @@ authentication is successful
 
 ```json
 {
-  "UserName": "example-user",
-  "Password": "terrible-password"
+  "username": "example-user",
+  "password": "terrible-password"
 }
 ```
 
@@ -60,8 +60,8 @@ authentication is successful
 
 ```json
 {
- "Key": "OdT7yQCl1a4xoCXc4OB1X7oSZH4q1bSpCuSEtxwLAu3YKaBd1MMwYfTVP/HbJKZJiNQKayi",
- "DisplayName": "example-user"
+ "key": "OdT7yQCl1a4xoCXc4OB1X7oSZH4q1bSpCuSEtxwLAu3YKaBd1MMwYfTVP/HbJKZJiNQKayi",
+ "displayname": "example-user"
 }
 ```
 
