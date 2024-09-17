@@ -4,9 +4,9 @@
 
 > `GET /users`
 
-Returns all registered users
+Gets all registered users
 
-Will return the following object
+**Returns**
 
 ```json
 [
@@ -17,27 +17,11 @@ Will return the following object
 ]
 ```
 
-## Auth Endpoints
-
-> `POST /auth`
-
-Creates a user session, returning a session key if
-authentication is successful
-
-Expected Body
-
-```json
-{
-  "UserName": "example-user",
-  "Password": "terrible-password"
-}
-```
-
 > `POST /users`
 
 Creates a new user
 
-Expected Body 
+**Expects** 
 
 ```json
 { 
@@ -47,6 +31,15 @@ Expected Body
 }
 ```
 
+**Returns** 
+
+```json
+{ 
+  "UserName": "example-user", 
+  "DisplayName": "Example", 
+}
+```
+
 ## Auth Endpoints
 
 > `POST /auth`
@@ -54,7 +47,7 @@ Expected Body
 Creates a user session, returning a session key if
 authentication is successful
 
-**Expected**
+**Expects**
 
 ```json
 {
