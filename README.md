@@ -35,8 +35,8 @@ Creates a new user
 
 ```json
 { 
-  "UserName": "example-user", 
-  "DisplayName": "Example", 
+  "username": "example-user",
+  "displayname": "Example",
 }
 ```
 
