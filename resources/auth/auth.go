@@ -54,7 +54,7 @@ type LogoutStruct struct {
 }
 
 func Logout(c echo.Context) error {
-	// Key is in the body of the request instead of path as it is still a secret, despite it about 
+	// Key is in the body of the request instead of path as it is still a secret, despite it about
 	// to be deleted
 	logoutDetails := new(LogoutStruct)
 
@@ -74,5 +74,5 @@ func Logout(c echo.Context) error {
 	userStore.DeleteSession(logoutDetails.Key)
 
 	// Return session key to user
-	return c.String(http.StatusOK, "Session removed");
+	return c.String(http.StatusOK, "Session removed")
 }
