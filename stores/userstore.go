@@ -75,3 +75,8 @@ func (s UserStore) GetSession(sessionKey string) *UserSession {
 
 	return &session
 }
+
+// Removes a sesion from the user store
+func (s UserStore) DeleteSession(sessionKey string) {
+	delete(s.sessions, sessionKey)
+}

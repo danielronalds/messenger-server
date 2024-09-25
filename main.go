@@ -27,6 +27,7 @@ func main() {
 	e.POST("/users", user.CreateUser)
 
 	e.POST("/auth", auth.Login)
+	e.DELETE("/auth", auth.Logout)
 
 	port := fmt.Sprintf(":%v", os.Getenv("SERVER_PORT"))
 	fmt.Println(port)

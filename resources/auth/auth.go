@@ -48,3 +48,31 @@ func Login(c echo.Context) error {
 		DisplayName: dbUser.DisplayName,
 	})
 }
+
+type LogoutStruct struct {
+	Key string `json:"key"`
+}
+
+func Logout(c echo.Context) error {
+	// Key is in the body of the request instead of path as it is still a secret, despite it about
+	// to be deleted
+	logoutDetails := new(LogoutStruct)
+
+	if err := c.Bind(&logoutDetails); err != nil {
+		log.Printf("Failed to bind logout details: %v", err.Error())
+		return c.String(http.StatusBadRequest, err.Error())
+	}
+
+	userStore := stores.GetUserStore()
+	session := userStore.GetSession(logoutDetails.Key)
+
+	if session == nil {
+		log.Printf("Users session not found")
+		return c.String(http.StatusNotFound, "Could not find user session")
+	}
+
+	userStore.DeleteSession(logoutDetails.Key)
+
+	// Return session key to user
+	return c.String(http.StatusOK, "Session removed")
+}
