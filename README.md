@@ -66,3 +66,22 @@ authentication is successful
 ```
 
 `Key` is always unique
+
+> `DELETE /auth`
+
+Deletes a user session, an action that should be taken when
+logging out.
+
+**Expects**
+
+```json
+{
+ "key": "OdT7yQCl1a4xoCXc4OB1X7oSZH4q1bSpCuSEtxwLAu3YKaBd1MMwYfTVP/HbJKZJiNQKayi",
+}
+```
+
+The key is the session that will be deleted
+
+**Returns**
+
+`200 OK` if all goes well

@@ -27,3 +27,18 @@ func TestUserStoreCreateAndReadSession(t *testing.T) {
 		t.Fatalf("Session details did not match\n%v", utils.PrettyString(session))
 	}
 }
+
+func TestSessionRemoval(t *testing.T) {
+	userName := "TestUser"
+
+	store := GetUserStore()
+
+	sessionKey, err := store.CreateSession(userName)
+	utils.HandleTestingError(t, err)
+
+	store.DeleteSession(sessionKey)
+
+	if store.GetSession(sessionKey) != nil {
+		t.Fatalf("Session was not removed!")
+	}
+}
