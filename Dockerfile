@@ -9,6 +9,7 @@ COPY db/ ./db/
 COPY resources/ ./resources/
 COPY utils/ ./utils/
 COPY stores/ ./stores/
+COPY security/ ./security/
 
 RUN go mod tidy
 RUN go build -o ./main .
