@@ -7,12 +7,20 @@ import (
 
 	"github.com/danielronalds/messenger-server/db"
 	"github.com/danielronalds/messenger-server/resources"
-	"github.com/danielronalds/messenger-server/utils/security"
+	"github.com/danielronalds/messenger-server/security"
 	"github.com/labstack/echo/v4"
 )
 
-func GetUsers(c echo.Context) error {
-	users, err := db.GetDatabase().GetUsers()
+type UserHandler struct {
+	db db.UserProvider
+}
+
+func NewUserHandler(db db.UserProvider) UserHandler {
+	return UserHandler{db}
+}
+
+func (h UserHandler) GetUsers(c echo.Context) error {
+	users, err := h.db.GetUsers()
 
 	if err != nil {
 		log.Printf("Failed to get users: %v", err.Error())
@@ -22,7 +30,7 @@ func GetUsers(c echo.Context) error {
 	return c.JSON(http.StatusOK, users)
 }
 
-func CreateUser(c echo.Context) error {
+func (h UserHandler) CreateUser(c echo.Context) error {
 	user := new(resources.PostedNewUser)
 
 	if err := c.Bind(&user); err != nil {
@@ -34,6 +42,10 @@ func CreateUser(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "A field was either missing or blank!")
 	}
 
+	if h.db.IsUsernameTaken(user.UserName) {
+		return c.String(http.StatusConflict, "Username is not available")
+	}
+
 	hasher := security.DefaultHash()
 
 	hashedPassword, err := hasher.GenerateNewHash([]byte(strings.TrimSpace(user.Password)))
@@ -43,13 +55,11 @@ func CreateUser(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, "Failed to generate a hash")
 	}
 
-	pg := db.GetDatabase()
-
-	newUser, err := pg.CreateUser(user.UserName, user.DisplayName, hashedPassword.Hash(), hashedPassword.Salt())
+	newUser, err := h.db.CreateUser(user.UserName, user.DisplayName, hashedPassword.Hash(), hashedPassword.Salt())
 	if err != nil {
 		log.Printf("Failed to create user: %v", err.Error())
 		return c.String(http.StatusInternalServerError, "Failed to create user")
 	}
 
-	return c.JSON(http.StatusOK, newUser)
+	return c.JSON(http.StatusCreated, newUser)
 }

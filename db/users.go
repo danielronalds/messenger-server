@@ -1,18 +1,11 @@
 package db
 
 import (
-	"github.com/danielronalds/messenger-server/utils/security"
+	. "github.com/danielronalds/messenger-server/db/dbtypes"
+	"github.com/danielronalds/messenger-server/security"
 )
 
 // This file contains the db logics concerning the Users table
-
-// This struct represents a User object from the DB.
-//
-// NOTE: The password field is not included as this struct should not be used in password queries
-type User struct {
-	UserName    string `json:"username"`
-	DisplayName string `json:"displayname"`
-}
 
 func (pg Postgres) GetUsers() ([]User, error) {
 	users := []User{}
@@ -64,6 +57,17 @@ func (pg Postgres) getSalt(username string) ([]byte, error) {
 	err := pg.connection.Get(&salt, query, username)
 
 	return salt, err
+}
+
+func (pg Postgres) IsUsernameTaken(username string) bool {
+	user := User{}
+
+	query := `SELECT UserName, DisplayName FROM api.Users WHERE Username = $1`
+
+	err := pg.connection.Get(&user, query, username)
+
+	// Postgres returns an error if there are no results i.e. no username exists
+	return err == nil
 }
 
 /* func (pg Postgres) DeleteUser(id int, password string) (int64, error) {

@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/danielronalds/messenger-server/db"
 	"github.com/danielronalds/messenger-server/resources/auth"
 	"github.com/danielronalds/messenger-server/resources/user"
 	"github.com/joho/godotenv"
@@ -23,11 +24,13 @@ func main() {
 	e.Use(middleware.CORS())
 	e.Use(middleware.Logger())
 
-	e.GET("/users", user.GetUsers)
-	e.POST("/users", user.CreateUser)
+	userHandler := user.NewUserHandler(db.GetDatabase())
+	e.GET("/users", userHandler.GetUsers)
+	e.POST("/users", userHandler.CreateUser)
 
-	e.POST("/auth", auth.Login)
-	e.DELETE("/auth", auth.Logout)
+	authHandler := auth.NewAuthHandler(db.GetDatabase())
+	e.POST("/auth", authHandler.Login)
+	e.DELETE("/auth", authHandler.Logout)
 
 	port := fmt.Sprintf(":%v", os.Getenv("SERVER_PORT"))
 	fmt.Println(port)
