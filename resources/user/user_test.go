@@ -15,7 +15,7 @@ import (
 var (
 	mockDB = map[string]db.User{
 		"johnsmith": {UserName: "johnsmith", DisplayName: "John Smith"},
-		"janesmith": {UserName:"janesmith", DisplayName:"Jane Smith"},
+		"janesmith": {UserName: "janesmith", DisplayName: "Jane Smith"},
 	}
 	dbJSON = `[{"username":"johnsmith","displayname":"John Smith"},{"username":"janesmith","displayname":"Jane Smith"}]`
 )

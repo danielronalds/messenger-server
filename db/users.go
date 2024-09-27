@@ -1,7 +1,6 @@
 package db
 
 import (
-
 	. "github.com/danielronalds/messenger-server/db/dbtypes"
 	"github.com/danielronalds/messenger-server/security"
 )

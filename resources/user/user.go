@@ -16,7 +16,7 @@ type UserHandler struct {
 }
 
 func NewUserHandler(db db.UserProvider) UserHandler {
-	return UserHandler { db }
+	return UserHandler{db}
 }
 
 func (h UserHandler) GetUsers(c echo.Context) error {

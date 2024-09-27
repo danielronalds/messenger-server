@@ -13,33 +13,33 @@ type MockedUserProvider struct {
 }
 
 func NewMockedUserProvider(db map[string]db.User) MockedUserProvider {
-	return MockedUserProvider { db }
+	return MockedUserProvider{db}
 }
 
 func (p MockedUserProvider) GetUsers() ([]db.User, error) {
-	users := make([]db.User, 0);
+	users := make([]db.User, 0)
 
 	for _, val := range p.db {
 		users = append(users, val)
 	}
 
 	sort.Slice(users, func(i, j int) bool {
-	  return users[i].UserName > users[j].UserName
-	});
+		return users[i].UserName > users[j].UserName
+	})
 
-	return users, nil;
+	return users, nil
 }
 
 func (p MockedUserProvider) GetUserWithPass(username string, password string) (db.User, error) {
-	return db.User{}, nil;
+	return db.User{}, nil
 }
 
 func (p MockedUserProvider) CreateUser(username, displayName string, hashedPassword, salt []byte) (db.User, error) {
-	return db.User{ UserName: username, DisplayName: displayName}, nil;
+	return db.User{UserName: username, DisplayName: displayName}, nil
 }
 
 func (p MockedUserProvider) IsUsernameTaken(username string) bool {
-    _, ok := p.db[username]
+	_, ok := p.db[username]
 
 	return ok
 }
