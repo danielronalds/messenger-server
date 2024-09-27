@@ -10,7 +10,7 @@ import (
 )
 
 type MockedUserProvider struct {
-	db map[string]db.User
+	db        map[string]db.User
 	passwords map[string]string
 }
 
@@ -21,7 +21,7 @@ func NewMockedUserProvider(db map[string]db.User) MockedUserProvider {
 		passwords[username] = "password"
 	}
 
-	return MockedUserProvider{db,passwords}
+	return MockedUserProvider{db, passwords}
 }
 
 func (p MockedUserProvider) GetUsers() ([]db.User, error) {

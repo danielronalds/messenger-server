@@ -111,8 +111,7 @@ func TestLogoutPassing(t *testing.T) {
 	session := LoginReturn{}
 	json.Unmarshal(loginRec.Body.Bytes(), &session)
 
-
-    logoutJson := `{"key":"` + session.Key + `"}`
+	logoutJson := `{"key":"` + session.Key + `"}`
 
 	logoutReq := httptest.NewRequest(http.MethodDelete, "/", strings.NewReader(logoutJson))
 	logoutReq.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
@@ -126,7 +125,7 @@ func TestLogoutPassing(t *testing.T) {
 
 func TestLogoutInvalidKey(t *testing.T) {
 	// Creating a session by logging in
-    logoutJson := `{"key":"OdT7yQCl1a4xoCXc4OB1X7oSZH4q1bSpCuSEtxwLAu3YKaBd1MMwYfTVP/HbJKZJiNQKayi"}`
+	logoutJson := `{"key":"OdT7yQCl1a4xoCXc4OB1X7oSZH4q1bSpCuSEtxwLAu3YKaBd1MMwYfTVP/HbJKZJiNQKayi"}`
 
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodDelete, "/", strings.NewReader(logoutJson))
