@@ -11,8 +11,16 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func GetUsers(c echo.Context) error {
-	users, err := db.GetDatabase().GetUsers()
+type UserHandler struct {
+	db db.UserProvider
+}
+
+func NewUserHandler(db db.UserProvider) UserHandler {
+	return UserHandler { db }
+}
+
+func (h UserHandler) GetUsers(c echo.Context) error {
+	users, err := h.db.GetUsers()
 
 	if err != nil {
 		log.Printf("Failed to get users: %v", err.Error())
@@ -22,7 +30,7 @@ func GetUsers(c echo.Context) error {
 	return c.JSON(http.StatusOK, users)
 }
 
-func CreateUser(c echo.Context) error {
+func (h UserHandler) CreateUser(c echo.Context) error {
 	user := new(resources.PostedNewUser)
 
 	if err := c.Bind(&user); err != nil {
@@ -43,9 +51,7 @@ func CreateUser(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, "Failed to generate a hash")
 	}
 
-	pg := db.GetDatabase()
-
-	newUser, err := pg.CreateUser(user.UserName, user.DisplayName, hashedPassword.Hash(), hashedPassword.Salt())
+	newUser, err := h.db.CreateUser(user.UserName, user.DisplayName, hashedPassword.Hash(), hashedPassword.Salt())
 	if err != nil {
 		log.Printf("Failed to create user: %v", err.Error())
 		return c.String(http.StatusInternalServerError, "Failed to create user")
