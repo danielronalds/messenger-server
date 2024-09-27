@@ -42,6 +42,10 @@ func (h UserHandler) CreateUser(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "A field was either missing or blank!")
 	}
 
+	if h.db.IsUsernameTaken(user.UserName) {
+		return c.String(http.StatusConflict, "Username is not available")
+	}
+
 	hasher := security.DefaultHash()
 
 	hashedPassword, err := hasher.GenerateNewHash([]byte(strings.TrimSpace(user.Password)))

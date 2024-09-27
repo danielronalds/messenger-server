@@ -2,7 +2,7 @@ package utils
 
 import (
 	"encoding/json"
-	"errors"
+	"sort"
 	"testing"
 
 	db "github.com/danielronalds/messenger-server/db/dbtypes"
@@ -23,6 +23,10 @@ func (p MockedUserProvider) GetUsers() ([]db.User, error) {
 		users = append(users, val)
 	}
 
+	sort.Slice(users, func(i, j int) bool {
+	  return users[i].UserName > users[j].UserName
+	});
+
 	return users, nil;
 }
 
@@ -31,15 +35,14 @@ func (p MockedUserProvider) GetUserWithPass(username string, password string) (d
 }
 
 func (p MockedUserProvider) CreateUser(username, displayName string, hashedPassword, salt []byte) (db.User, error) {
-    _, ok := p.db[username]
-
-	if ok {
-		return db.User{}, errors.New("Duplicate key")
-	}
-
 	return db.User{ UserName: username, DisplayName: displayName}, nil;
 }
 
+func (p MockedUserProvider) IsUsernameTaken(username string) bool {
+    _, ok := p.db[username]
+
+	return ok
+}
 
 // This function handles an error during testing
 func HandleTestingError(t *testing.T, err error) {
