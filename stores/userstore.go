@@ -3,7 +3,7 @@ package stores
 import (
 	"time"
 
-	"github.com/danielronalds/messenger-server/utils/security"
+	"github.com/danielronalds/messenger-server/security"
 )
 
 // A struct to represents a user's logged in session

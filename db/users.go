@@ -1,18 +1,11 @@
 package db
 
 import (
-	"github.com/danielronalds/messenger-server/utils/security"
+	"github.com/danielronalds/messenger-server/security"
+	. "github.com/danielronalds/messenger-server/db/dbtypes"
 )
 
 // This file contains the db logics concerning the Users table
-
-// This struct represents a User object from the DB.
-//
-// NOTE: The password field is not included as this struct should not be used in password queries
-type User struct {
-	UserName    string `json:"username"`
-	DisplayName string `json:"displayname"`
-}
 
 func (pg Postgres) GetUsers() ([]User, error) {
 	users := []User{}

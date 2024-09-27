@@ -2,9 +2,10 @@ package utils
 
 import (
 	"encoding/json"
+	"errors"
 	"testing"
 
-	"github.com/danielronalds/messenger-server/db"
+	db "github.com/danielronalds/messenger-server/db/dbtypes"
 )
 
 type MockedUserProvider struct {
@@ -30,7 +31,13 @@ func (p MockedUserProvider) GetUserWithPass(username string, password string) (d
 }
 
 func (p MockedUserProvider) CreateUser(username, displayName string, hashedPassword, salt []byte) (db.User, error) {
-	return db.User{}, nil;
+    _, ok := p.db[username]
+
+	if ok {
+		return db.User{}, errors.New("Duplicate key")
+	}
+
+	return db.User{ UserName: username, DisplayName: displayName}, nil;
 }
 
 

@@ -7,7 +7,7 @@ import (
 
 	"github.com/danielronalds/messenger-server/db"
 	"github.com/danielronalds/messenger-server/resources"
-	"github.com/danielronalds/messenger-server/utils/security"
+	"github.com/danielronalds/messenger-server/security"
 	"github.com/labstack/echo/v4"
 )
 
@@ -57,5 +57,5 @@ func (h UserHandler) CreateUser(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, "Failed to create user")
 	}
 
-	return c.JSON(http.StatusOK, newUser)
+	return c.JSON(http.StatusCreated, newUser)
 }
