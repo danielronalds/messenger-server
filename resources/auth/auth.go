@@ -10,12 +10,29 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type LoginReturn struct {
-	Key         string `json:"key"`
-	DisplayName string `json:"displayname"`
+type (
+	// The endpoint handler for authentication
+	AuthHandler struct {
+		db db.UserProvider
+	}
+
+	// The submitted data in a login request
+	LoginReturn struct {
+		Key         string `json:"key"`
+		DisplayName string `json:"displayname"`
+	}
+
+	// The submitted data in a logout request
+	LogoutStruct struct {
+		Key string `json:"key"`
+	}
+)
+
+func NewAuthHandler(db db.UserProvider) AuthHandler {
+	return AuthHandler{db}
 }
 
-func Login(c echo.Context) error {
+func (h AuthHandler) Login(c echo.Context) error {
 	postedUser := new(resources.PostedUser)
 
 	if err := c.Bind(&postedUser); err != nil {
@@ -27,11 +44,11 @@ func Login(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "Login details were not valid!")
 	}
 
-	dbUser, err := db.GetDatabase().GetUserWithPass(postedUser.UserName, postedUser.Password)
+	dbUser, err := h.db.GetUserWithPass(postedUser.UserName, postedUser.Password)
 
 	if err != nil {
 		log.Printf("Failed to fetch user with login: %v", err.Error())
-		return c.String(http.StatusNotFound, "Could not find user")
+		return c.String(http.StatusUnauthorized, "Invalid Credentials")
 	}
 
 	// Create a session
@@ -49,11 +66,7 @@ func Login(c echo.Context) error {
 	})
 }
 
-type LogoutStruct struct {
-	Key string `json:"key"`
-}
-
-func Logout(c echo.Context) error {
+func (h AuthHandler) Logout(c echo.Context) error {
 	// Key is in the body of the request instead of path as it is still a secret, despite it about
 	// to be deleted
 	logoutDetails := new(LogoutStruct)

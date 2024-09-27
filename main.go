@@ -28,8 +28,9 @@ func main() {
 	e.GET("/users", userHandler.GetUsers)
 	e.POST("/users", userHandler.CreateUser)
 
-	e.POST("/auth", auth.Login)
-	e.DELETE("/auth", auth.Logout)
+	authHandler := auth.NewAuthHandler(db.GetDatabase())
+	e.POST("/auth", authHandler.Login)
+	e.DELETE("/auth", authHandler.Logout)
 
 	port := fmt.Sprintf(":%v", os.Getenv("SERVER_PORT"))
 	fmt.Println(port)

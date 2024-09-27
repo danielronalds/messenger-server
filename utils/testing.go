@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"errors"
 	"sort"
 	"testing"
 
@@ -10,10 +11,17 @@ import (
 
 type MockedUserProvider struct {
 	db map[string]db.User
+	passwords map[string]string
 }
 
 func NewMockedUserProvider(db map[string]db.User) MockedUserProvider {
-	return MockedUserProvider{db}
+	passwords := make(map[string]string, 0)
+
+	for username := range db {
+		passwords[username] = "password"
+	}
+
+	return MockedUserProvider{db,passwords}
 }
 
 func (p MockedUserProvider) GetUsers() ([]db.User, error) {
@@ -31,7 +39,13 @@ func (p MockedUserProvider) GetUsers() ([]db.User, error) {
 }
 
 func (p MockedUserProvider) GetUserWithPass(username string, password string) (db.User, error) {
-	return db.User{}, nil
+	actualPassword := p.passwords[username]
+
+	if actualPassword != password {
+		return db.User{}, errors.New("incorrect password!")
+	}
+
+	return p.db[username], nil
 }
 
 func (p MockedUserProvider) CreateUser(username, displayName string, hashedPassword, salt []byte) (db.User, error) {
