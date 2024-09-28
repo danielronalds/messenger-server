@@ -60,13 +60,19 @@ func (p MockedUserProvider) IsUsernameTaken(username string) bool {
 type MockedMessageProvider struct {
 	// Key is the receiver of the message
 	db map[string][]db.Message
+	users map[string]bool
 }
 
-func NewMockedMessageProvider(db map[string][]db.Message) MockedMessageProvider {
-	return MockedMessageProvider{db}
+func NewMockedMessageProvider(db map[string][]db.Message, users map[string]bool) MockedMessageProvider {
+	return MockedMessageProvider{db,users}
 }
 
 func (p MockedMessageProvider) SendMessage(from string, to string, content string) (db.Message, error) {
+	_, ok := p.users[to]
+	if !ok {
+		return db.Message{}, errors.New("Invalid user")
+	}
+
 	return db.Message{
 		Id:        1,
 		Sender:    from,

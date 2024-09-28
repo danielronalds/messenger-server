@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/danielronalds/messenger-server/db"
+	"github.com/danielronalds/messenger-server/stores"
 	"github.com/labstack/echo/v4"
 )
 
@@ -16,18 +17,17 @@ type (
 	}
 
 	PostedMessage struct {
-		From    string `json:"from"`
+		Key    string `json:"key"`
 		To      string `json:"to"`
 		Content string `json:"content"`
 	}
 )
 
 func (m PostedMessage) IsValid() bool {
-	trimmedFrom := strings.TrimSpace(m.From)
 	trimmedTo := strings.TrimSpace(m.To)
 	trimmedContent := strings.TrimSpace(m.Content)
 
-	return len(trimmedFrom) > 0 && len(trimmedTo) > 0 && len(trimmedContent) > 0
+	return len(trimmedTo) > 0 && len(trimmedContent) > 0
 }
 
 func NewMessageHandler(db db.MessageProvider) MessageHandler {
@@ -46,12 +46,21 @@ func (h MessageHandler) SendMessage(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "Malformed request")
 	}
 
-	message, err := h.db.SendMessage(postedMessage.From, postedMessage.To, postedMessage.Content)
+	session := stores.GetUserStore().GetSession(postedMessage.Key)
+	if session == nil {
+		return c.String(http.StatusUnauthorized, "Invalid key");
+	}
 
+	if session.Username == postedMessage.To {
+		return c.String(http.StatusBadRequest, "Cannot send message to self")
+	}
+
+	message, err := h.db.SendMessage(session.Username, postedMessage.To, postedMessage.Content)
+
+	// Assuming that if an error happens from the DB call, then to username key was not acceptable
 	if err != nil {
 		log.Printf("Failed to send message: %v", err.Error())
-		// FIX: This might need to be 409?
-		return c.String(http.StatusInternalServerError, "Unable to send message")
+		return c.String(http.StatusConflict, "Cannot find receiver")
 	}
 
 	return c.JSON(http.StatusCreated, message)

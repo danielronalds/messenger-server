@@ -9,6 +9,7 @@ import (
 	"time"
 
 	db "github.com/danielronalds/messenger-server/db/dbtypes"
+	"github.com/danielronalds/messenger-server/stores"
 	"github.com/danielronalds/messenger-server/utils"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
@@ -40,10 +41,17 @@ var (
 			IsRead:    true,
 		}},
 	}
+	mockUsers = map[string]bool {
+		"johnsmith": true,
+		"janesmith": true,
+	}
 )
 
 func TestSendMessagePassing(t *testing.T) {
-	messageJson := `{"to":"johnsmith","from":"janesmith","content":"But I really don't like the curtains"}`
+	key, err := stores.GetUserStore().CreateSession("janesmith")
+	utils.HandleTestingError(t, err)
+
+	messageJson := `{"key":"` + key + `","to":"johnsmith","content":"But I really don't like the curtains"}`
 
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(messageJson))
@@ -51,7 +59,7 @@ func TestSendMessagePassing(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	provider := utils.NewMockedMessageProvider(mockDB)
+	provider := utils.NewMockedMessageProvider(mockDB, mockUsers)
 	handler := NewMessageHandler(provider)
 
 	if assert.NoError(t, handler.SendMessage(c)) {
@@ -68,8 +76,8 @@ func TestSendMessagePassing(t *testing.T) {
 	}
 }
 
-func TestSendMessageMissingField(t *testing.T) {
-	messageJson := `{"to":"johnsmith","from":"janesmith"}`
+func TestSendMessageNoKey(t *testing.T) {
+	messageJson := `{"key":"","to":"johnsmith","content":"But I really don't like the curtains"}`
 
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(messageJson))
@@ -77,7 +85,47 @@ func TestSendMessageMissingField(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	provider := utils.NewMockedMessageProvider(mockDB)
+	provider := utils.NewMockedMessageProvider(mockDB, mockUsers)
+	handler := NewMessageHandler(provider)
+
+	if assert.NoError(t, handler.SendMessage(c)) {
+		assert.Equal(t, http.StatusUnauthorized, rec.Code)
+	}
+}
+
+func TestSendMessageMissingField(t *testing.T) {
+	key, err := stores.GetUserStore().CreateSession("johnsmith")
+	utils.HandleTestingError(t, err)
+
+	messageJson := `{"key":"` + key + `","to":"janesmith"}`
+
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(messageJson))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+
+	provider := utils.NewMockedMessageProvider(mockDB, mockUsers)
+	handler := NewMessageHandler(provider)
+
+	if assert.NoError(t, handler.SendMessage(c)) {
+		assert.Equal(t, http.StatusBadRequest, rec.Code)
+	}
+}
+
+func TestSendMessageToSelf(t *testing.T) {
+	key, err := stores.GetUserStore().CreateSession("johnsmith")
+	utils.HandleTestingError(t, err)
+
+	messageJson := `{"key":"` + key + `","to":"johnsmith","content":"Hello future me"}`
+
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(messageJson))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+
+	provider := utils.NewMockedMessageProvider(mockDB, mockUsers)
 	handler := NewMessageHandler(provider)
 
 	if assert.NoError(t, handler.SendMessage(c)) {
@@ -86,7 +134,10 @@ func TestSendMessageMissingField(t *testing.T) {
 }
 
 func TestSendMessageBlankContent(t *testing.T) {
-	messageJson := `{"to":"johnsmith","from":"janesmith","content":""}`
+	key, err := stores.GetUserStore().CreateSession("johnsmith")
+	utils.HandleTestingError(t, err)
+
+	messageJson := `{"key":"` + key + `","to":"janesmith","content":""}`
 
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(messageJson))
@@ -94,7 +145,7 @@ func TestSendMessageBlankContent(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	provider := utils.NewMockedMessageProvider(mockDB)
+	provider := utils.NewMockedMessageProvider(mockDB, mockUsers)
 	handler := NewMessageHandler(provider)
 
 	if assert.NoError(t, handler.SendMessage(c)) {
@@ -102,9 +153,11 @@ func TestSendMessageBlankContent(t *testing.T) {
 	}
 }
 
-// FIXME: This test currently fails
-func TestSendMessageInvalidUser(t *testing.T) {
-	messageJson := `{"to":"johnsmith","from":"jonsnow","content":"testing"}`
+func TestSendMessageNonexistingReceiver(t *testing.T) {
+	key, err := stores.GetUserStore().CreateSession("johnsmith")
+	utils.HandleTestingError(t, err)
+
+	messageJson := `{"key":"` + key + `","to":"jonsnow","content":"Hi Jon"}`
 
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(messageJson))
@@ -112,7 +165,7 @@ func TestSendMessageInvalidUser(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	provider := utils.NewMockedMessageProvider(mockDB)
+	provider := utils.NewMockedMessageProvider(mockDB, mockUsers)
 	handler := NewMessageHandler(provider)
 
 	if assert.NoError(t, handler.SendMessage(c)) {
