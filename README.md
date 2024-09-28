@@ -76,7 +76,7 @@ logging out.
 
 ```json
 {
- "key": "OdT7yQCl1a4xoCXc4OB1X7oSZH4q1bSpCuSEtxwLAu3YKaBd1MMwYfTVP/HbJKZJiNQKayi",
+ "key": "OdT7yQCl1a4xoCXc4OB1X7oSZH4q1bSpCuSEtxwLAu3YKaBd1MMwYfTVP/HbJKZJiNQKayi"
 }
 ```
 
@@ -85,3 +85,33 @@ The key is the session that will be deleted
 **Returns**
 
 `200 OK` if all goes well
+
+## Message Endpoints
+
+> `POST /message`
+
+Sends a message from the user to another user. Uses
+authentication.
+
+**Expects**
+
+```json
+{
+ "key": "OdT7yQCl1a4xoCXc4OB1X7oSZH4q1bSpCuSEtxwLAu3YKaBd1MMwYfTVP/HbJKZJiNQKayi",
+ "to": "example-user",
+ "content": "Hello world!"
+}
+```
+
+**Returns**
+
+```json
+{
+	"id": 1
+	"sender": "jonsnow"
+	"receiver": "example-user"
+	"content": "Hello, world!"
+	"delivered": time.Now()
+	"isRead": false
+}
+```
