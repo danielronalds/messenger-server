@@ -58,10 +58,11 @@ func (p MockedUserProvider) IsUsernameTaken(username string) bool {
 }
 
 type MockedMessageProvider struct {
-	db map[string]db.Message
+	// Key is the receiver of the message
+	db map[string][]db.Message
 }
 
-func NewMockedMessageProvider(db map[string]db.Message) MockedMessageProvider {
+func NewMockedMessageProvider(db map[string][]db.Message) MockedMessageProvider {
 	return MockedMessageProvider{db}
 }
 
@@ -79,13 +80,15 @@ func (p MockedMessageProvider) SendMessage(from string, to string, content strin
 func (p MockedMessageProvider) GetUnreadMessages(to string) ([]db.Message, error) {
 	unreadMessages := make([]db.Message, 0)
 
-	for receiver, message := range p.db {
+	for receiver, messages := range p.db {
 		if receiver != to {
 			continue
 		}
 
-		if !message.IsRead {
-			unreadMessages = append(unreadMessages, message)
+		for _, message := range messages {
+			if !message.IsRead {
+				unreadMessages = append(unreadMessages, message)
+			}
 		}
 	}
 

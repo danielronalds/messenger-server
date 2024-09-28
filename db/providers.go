@@ -10,7 +10,7 @@ type UserProvider interface {
 }
 
 type MessageProvider interface {
-	SendMessage(from string, to string, content string) (Message, error);
-	GetUnreadMessages(to string) ([]Message, error);
+	SendMessage(from string, to string, content string) (Message, error)
+	GetUnreadMessages(to string) ([]Message, error)
 	// TODO: ReadMessages(ids []int) (int, error)
 }
