@@ -8,3 +8,9 @@ type UserProvider interface {
 	CreateUser(username, displayName string, hashedPassword, salt []byte) (User, error)
 	IsUsernameTaken(username string) bool
 }
+
+type MessageProvider interface {
+	SendMessage(from string, to string, content string) (Message, error);
+	GetUnreadMessages(to string) ([]Message, error);
+	// TODO: ReadMessages(ids []int) (int, error)
+}
