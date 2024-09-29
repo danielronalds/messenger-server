@@ -1,6 +1,6 @@
 # Lists all Make commands
 ls:
-	@grep "^	" -v Makefile
+	@grep "^	" -v Makefile | grep "shell" -v | grep "ifdef" -v | grep "else" -v | grep "endif" -v
 
 # Build the API docker container
 build:
@@ -30,9 +30,15 @@ clean:
 fmt:
 	go fmt github.com/danielronalds/...
 
+GOTESTSUM_VERSION := $(shell gotestsum --version 2>/dev/null)
+
 # Runs all tests
 test:
+ifdef GOTESTSUM_VERSION
+	gotestsum --format testname github.com/danielronalds/...
+else
 	go test github.com/danielronalds/...
+endif
 
 # Seeds the database with some default data
 seed-db:
