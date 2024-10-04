@@ -41,7 +41,7 @@ var (
 			IsRead:    true,
 		}},
 	}
-	mockUsers = map[string]bool {
+	mockUsers = map[string]bool{
 		"johnsmith": true,
 		"janesmith": true,
 	}

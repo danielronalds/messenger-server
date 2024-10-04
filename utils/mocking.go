@@ -60,12 +60,12 @@ func (p MockedUserProvider) IsUsernameTaken(username string) bool {
 
 type MockedMessageProvider struct {
 	// Key is the receiver of the message
-	db map[string][]db.Message
+	db    map[string][]db.Message
 	users map[string]bool
 }
 
 func NewMockedMessageProvider(db map[string][]db.Message, users map[string]bool) MockedMessageProvider {
-	return MockedMessageProvider{db,users}
+	return MockedMessageProvider{db, users}
 }
 
 func (p MockedMessageProvider) SendMessage(from string, to string, content string) (db.Message, error) {
@@ -108,7 +108,7 @@ func (p MockedMessageProvider) ReadMessages(ids []int) ([]db.Message, error) {
 	for _, messages := range p.db {
 		for _, message := range messages {
 			if !slices.Contains(ids, message.Id) {
-				continue;
+				continue
 			}
 
 			message.IsRead = true

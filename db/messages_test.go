@@ -7,7 +7,7 @@ import (
 )
 
 func TestConstructReadMessagesQuery(t *testing.T) {
-	ids := []int{1,2,3,4} 
+	ids := []int{1, 2, 3, 4}
 
 	query := constructReadMessagesQuery(ids)
 
@@ -17,7 +17,7 @@ func TestConstructReadMessagesQuery(t *testing.T) {
 }
 
 func TestConstructReadMessagesQueryOneId(t *testing.T) {
-	ids := []int{1} 
+	ids := []int{1}
 
 	query := constructReadMessagesQuery(ids)
 

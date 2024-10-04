@@ -36,7 +36,6 @@ func (pg Postgres) ReadMessages(ids []int) ([]Message, error) {
 
 	query := constructReadMessagesQuery(ids)
 
-
 	err := pg.connection.Select(&messages, query)
 
 	return messages, err
@@ -46,7 +45,7 @@ func (pg Postgres) ReadMessages(ids []int) ([]Message, error) {
 //
 // Split for the purpose of testing
 func constructReadMessagesQuery(ids []int) string {
-	idSelects := slicetools.MapWithIndex(ids, func (i int, id int) string {
+	idSelects := slicetools.MapWithIndex(ids, func(i int, id int) string {
 		if i == 0 {
 			return fmt.Sprintf("Id = %v", id)
 		}
