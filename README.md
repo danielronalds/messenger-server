@@ -115,3 +115,14 @@ authentication.
 	"isRead": false
 }
 ```
+
+> `POST /message/unread`
+
+Gets unread messages
+
+**Expects**
+
+```json
+{
+ "key": "OdT7yQCl1a4xoCXc4OB1X7oSZH4q1bSpCuSEtxwLAu3YKaBd1MMwYfTVP/HbJKZJiNQKayi",
+}

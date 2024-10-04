@@ -35,6 +35,7 @@ func main() {
 
 	messageHandler := message.NewMessageHandler(db.GetDatabase())
 	e.POST("/message", messageHandler.SendMessage)
+	e.POST("/message/unread", messageHandler.GetUnreadMessages)
 
 	port := fmt.Sprintf(":%v", os.Getenv("SERVER_PORT"))
 	fmt.Println(port)
