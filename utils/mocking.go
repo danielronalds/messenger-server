@@ -2,6 +2,7 @@ package utils
 
 import (
 	"errors"
+	"slices"
 	"sort"
 	"time"
 
@@ -99,4 +100,21 @@ func (p MockedMessageProvider) GetUnreadMessages(to string) ([]db.Message, error
 	}
 
 	return unreadMessages, nil
+}
+
+func (p MockedMessageProvider) ReadMessages(ids []int) ([]db.Message, error) {
+	messsages := make([]db.Message, 0)
+
+	for _, messages := range p.db {
+		for _, message := range messages {
+			if !slices.Contains(ids, message.Id) {
+				continue;
+			}
+
+			message.IsRead = true
+			messages = append(messages, message)
+		}
+	}
+
+	return messsages, nil
 }

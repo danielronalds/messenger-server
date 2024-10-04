@@ -21,11 +21,6 @@ type (
 		Key         string `json:"key"`
 		DisplayName string `json:"displayname"`
 	}
-
-	// The submitted data in a logout request
-	LogoutStruct struct {
-		Key string `json:"key"`
-	}
 )
 
 func NewAuthHandler(db db.UserProvider) AuthHandler {
@@ -69,7 +64,7 @@ func (h AuthHandler) Login(c echo.Context) error {
 func (h AuthHandler) Logout(c echo.Context) error {
 	// Key is in the body of the request instead of path as it is still a secret, despite it about
 	// to be deleted
-	logoutDetails := new(LogoutStruct)
+	logoutDetails := new(resources.KeyStruct)
 
 	if err := c.Bind(&logoutDetails); err != nil {
 		log.Printf("Failed to bind logout details: %v", err.Error())

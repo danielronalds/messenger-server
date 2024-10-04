@@ -6,7 +6,10 @@ import (
 	"strings"
 
 	"github.com/danielronalds/messenger-server/db"
+	"github.com/danielronalds/messenger-server/db/dbtypes"
+	"github.com/danielronalds/messenger-server/resources"
 	"github.com/danielronalds/messenger-server/stores"
+	"github.com/danielronalds/slicetools"
 	"github.com/labstack/echo/v4"
 )
 
@@ -17,7 +20,7 @@ type (
 	}
 
 	PostedMessage struct {
-		Key    string `json:"key"`
+		Key     string `json:"key"`
 		To      string `json:"to"`
 		Content string `json:"content"`
 	}
@@ -48,7 +51,7 @@ func (h MessageHandler) SendMessage(c echo.Context) error {
 
 	session := stores.GetUserStore().GetSession(postedMessage.Key)
 	if session == nil {
-		return c.String(http.StatusUnauthorized, "Invalid key");
+		return c.String(http.StatusUnauthorized, "Invalid key")
 	}
 
 	if session.Username == postedMessage.To {
@@ -64,4 +67,32 @@ func (h MessageHandler) SendMessage(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, message)
+}
+
+func (h MessageHandler) GetUnreadMessages(c echo.Context) error {
+	resBody := resources.KeyStruct{}
+
+	if err := c.Bind(&resBody); err != nil {
+		log.Printf("Failed to retrieve key: %v", err.Error())
+		return c.String(http.StatusBadRequest, err.Error())
+	}
+
+	session := stores.GetUserStore().GetSession(resBody.Key)
+	if session == nil {
+		return c.String(http.StatusUnauthorized, "Invalid key")
+	}
+
+	unreadMessages, err := h.db.GetUnreadMessages(session.Username)
+
+	if err != nil {
+		return c.JSON(http.StatusNoContent, make([]dbtypes.Message, 0))
+	}
+
+	messageIds := slicetools.Map(unreadMessages, func(m dbtypes.Message) int {
+		return m.Id
+	})
+
+	h.db.ReadMessages(messageIds)
+
+	return c.JSON(http.StatusOK, unreadMessages)
 }
