@@ -116,9 +116,11 @@ authentication.
 }
 ```
 
-> `POST /message/unread`
+## Inbox Endpoint
 
-Gets unread messages
+> `POST /inbox/unread`
+
+Gets unread messages for all contacts.
 
 **Expects**
 

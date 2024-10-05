@@ -28,7 +28,7 @@ clean:
 
 # Formats the code
 fmt:
-	go fmt github.com/danielronalds/...
+	go fmt github.com/danielronalds/messenger-server/...
 
 GOTESTSUM_VERSION := $(shell gotestsum --version 2>/dev/null)
 

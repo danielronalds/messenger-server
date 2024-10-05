@@ -7,6 +7,7 @@ import (
 
 	"github.com/danielronalds/messenger-server/db"
 	"github.com/danielronalds/messenger-server/resources/auth"
+	"github.com/danielronalds/messenger-server/resources/inbox"
 	"github.com/danielronalds/messenger-server/resources/message"
 	"github.com/danielronalds/messenger-server/resources/user"
 	"github.com/joho/godotenv"
@@ -35,7 +36,9 @@ func main() {
 
 	messageHandler := message.NewMessageHandler(db.GetDatabase())
 	e.POST("/message", messageHandler.SendMessage)
-	e.POST("/message/unread", messageHandler.GetUnreadMessages)
+
+	inboxHandler := inbox.NewInboxHandler(db.GetDatabase())
+	e.POST("/inbox/unread", inboxHandler.GetUnreadMessages)
 
 	port := fmt.Sprintf(":%v", os.Getenv("SERVER_PORT"))
 	fmt.Println(port)
