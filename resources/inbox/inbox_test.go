@@ -113,6 +113,26 @@ func TestGetMessagesMalformedRequest(t *testing.T) {
 	}
 }
 
+func TestGetMessagesNoMesssages(t *testing.T) {
+	key, err := stores.GetUserStore().CreateSession("johnsmith")
+	utils.HandleTestingError(t, err)
+
+	endpointJson := `{"key":"` + key + `","contact":"janesmith"}`
+
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(endpointJson))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+
+	provider := utils.NewMockedMessageProvider(make(map[string][]db.Message), mockUsers)
+	handler := NewInboxHandler(provider)
+
+	if assert.NoError(t, handler.GetMessages(c)) {
+		assert.Equal(t, http.StatusNoContent, rec.Code)
+	}
+}
+
 func TestGetUnreadMessagesPassing(t *testing.T) {
 	key, err := stores.GetUserStore().CreateSession("johnsmith")
 	utils.HandleTestingError(t, err)
@@ -142,11 +162,11 @@ func TestGetUnreadMessagesPassing(t *testing.T) {
 	}
 }
 
-func TestGetUnreadMessagesMarkedAsRead(t *testing.T) {
+func TestGetUnreadMessagesNoMessages(t *testing.T) {
 	key, err := stores.GetUserStore().CreateSession("johnsmith")
 	utils.HandleTestingError(t, err)
 
-	endpointJson := `{"key":"` + key + `"}`
+	endpointJson := `{"key":"` + key + `","contact":"janesmith"}`
 
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(endpointJson))
@@ -154,16 +174,10 @@ func TestGetUnreadMessagesMarkedAsRead(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	provider := utils.NewMockedMessageProvider(mockDB, mockUsers)
+	provider := utils.NewMockedMessageProvider(make(map[string][]db.Message), mockUsers)
 	handler := NewInboxHandler(provider)
 
-	// Quering the endpoint twice, as messages should get marked as read after the response
-	if assert.NoError(t, handler.GetUnreadMessages(c)) {
-		if assert.NoError(t, handler.GetUnreadMessages(c)) {
-			messages := make([]db.Message, 0)
-			json.Unmarshal(rec.Body.Bytes(), &messages)
-
-			assert.True(t, len(messages) == 0)
-		}
+	if assert.NoError(t, handler.GetMessages(c)) {
+		assert.Equal(t, http.StatusNoContent, rec.Code)
 	}
 }

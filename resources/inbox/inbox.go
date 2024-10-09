@@ -52,6 +52,10 @@ func (h InboxHandler) GetMessages(c echo.Context) error {
 
 	if err != nil {
 		log.Printf("Error when fetching messages: %v", err.Error())
+		return c.String(http.StatusInternalServerError, "An error occured fetching messages")
+	}
+
+	if len(messages) == 0 {
 		return c.NoContent(http.StatusNoContent)
 	}
 
