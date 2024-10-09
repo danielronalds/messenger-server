@@ -84,6 +84,40 @@ func (p MockedMessageProvider) SendMessage(from string, to string, content strin
 	}, nil
 }
 
+func (p MockedMessageProvider) GetMessages(participantOne string, participantTwo string) ([]db.Message, error) {
+	messages := make([]db.Message, 0)
+
+	for receiver, messages := range p.db {
+		if receiver != participantOne { 
+			continue
+		}
+
+		for _, message := range messages {
+			if message.IsRead && message.Sender == participantTwo {
+				messages = append(messages, message)
+			}
+		}
+	}
+
+	for receiver, messages := range p.db {
+		if receiver != participantTwo { 
+			continue
+		}
+
+		for _, message := range messages {
+			if message.IsRead && message.Sender == participantOne {
+				messages = append(messages, message)
+			}
+		}
+	}
+
+	if len(messages) == 0 {
+		return messages, errors.New("No messages")
+	}
+
+	return messages, nil
+}
+
 func (p MockedMessageProvider) GetUnreadMessages(to string) ([]db.Message, error) {
 	unreadMessages := make([]db.Message, 0)
 

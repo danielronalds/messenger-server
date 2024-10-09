@@ -38,6 +38,7 @@ func main() {
 	e.POST("/message", messageHandler.SendMessage)
 
 	inboxHandler := inbox.NewInboxHandler(db.GetDatabase())
+	e.POST("/inbox", inboxHandler.GetMessages)
 	e.POST("/inbox/unread", inboxHandler.GetUnreadMessages)
 
 	port := fmt.Sprintf(":%v", os.Getenv("SERVER_PORT"))

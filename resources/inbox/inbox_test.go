@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -46,6 +47,71 @@ var (
 		"janesmith": true,
 	}
 )
+
+func TestGetMessagesPassing(t *testing.T) {
+	key, err := stores.GetUserStore().CreateSession("johnsmith")
+	utils.HandleTestingError(t, err)
+
+	endpointJson := `{"key":"` + key + `","contact":"janesmith"}`
+
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(endpointJson))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+
+	provider := utils.NewMockedMessageProvider(mockDB, mockUsers)
+	handler := NewInboxHandler(provider)
+
+	if assert.NoError(t, handler.GetMessages(c)) {
+		assert.Equal(t, http.StatusOK, rec.Code)
+
+		messages := make([]db.Message, 0)
+		json.Unmarshal(rec.Body.Bytes(), &messages)
+
+
+		expected := []db.Message {{
+			Id:        0,
+			Sender:    "janesmith",
+			Receiver:  "johnsmith",
+			Content:   "Do you like the curtains?",
+			Delivered: time.Time{},
+			IsRead:    true,
+		}, {
+			Id:        1,
+			Sender:    "johnsmith",
+			Receiver:  "janesmith",
+			Content:   "No, they're ugly",
+			Delivered: time.Time{},
+			IsRead:    true,
+		}}
+
+		if !slices.Equal(messages, expected) {
+			t.Fatalf("Slices weren't a match, actual: %v", utils.PrettyString(messages))
+		}
+	}
+}
+
+func TestGetMessagesMalformedRequest(t *testing.T) {
+	key, err := stores.GetUserStore().CreateSession("johnsmith")
+	utils.HandleTestingError(t, err)
+
+	// Missing contact
+	endpointJson := `{"key":"` + key + `"}`
+
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(endpointJson))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+
+	provider := utils.NewMockedMessageProvider(mockDB, mockUsers)
+	handler := NewInboxHandler(provider)
+
+	if assert.NoError(t, handler.GetMessages(c)) {
+		assert.Equal(t, http.StatusBadRequest, rec.Code)
+	}
+}
 
 func TestGetUnreadMessagesPassing(t *testing.T) {
 	key, err := stores.GetUserStore().CreateSession("johnsmith")

@@ -19,10 +19,21 @@ func (pg Postgres) SendMessage(from string, to string, content string) (Message,
 	return newMessage, err
 }
 
+// Gets messages from an interaction in the database
+func (pg Postgres) GetMessages(mainSender string, typicalReceiver string) ([]Message, error) {
+	messages := []Message{}
+
+	query := "SELECT * FROM api.Messages WHERE ((Sender = $1 AND Receiver = $2) OR (Sender = $2 AND Receiver = $1) AND IsRead = TRUE);"
+
+	err := pg.connection.Select(&messages, query, mainSender, typicalReceiver)
+
+	return messages, err
+}
+
 func (pg Postgres) GetUnreadMessages(to string) ([]Message, error) {
 	messages := []Message{}
 
-	err := pg.connection.Select(&messages, "SELECT * FROM api.Messages WHERE Receiver = $1 AND IsRead = FALSE;")
+	err := pg.connection.Select(&messages, "SELECT * FROM api.Messages WHERE Receiver = $1 AND IsRead = FALSE;", to)
 
 	return messages, err
 }
@@ -49,7 +60,7 @@ func constructReadMessagesQuery(ids []int) string {
 		if i == 0 {
 			return fmt.Sprintf("Id = %v", id)
 		}
-		return fmt.Sprintf(" AND Id = %v", id)
+		return fmt.Sprintf(" OR Id = %v", id)
 	})
 
 	baseQuery := `UPDATE api.Messages SET IsRead = TRUE WHERE `

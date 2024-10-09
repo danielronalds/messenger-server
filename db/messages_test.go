@@ -11,7 +11,7 @@ func TestConstructReadMessagesQuery(t *testing.T) {
 
 	query := constructReadMessagesQuery(ids)
 
-	expected := "UPDATE api.Messages SET IsRead = TRUE WHERE Id = 1 AND Id = 2 AND Id = 3 AND Id = 4 RETURNING *;"
+	expected := "UPDATE api.Messages SET IsRead = TRUE WHERE Id = 1 OR Id = 2 OR Id = 3 OR Id = 4 RETURNING *;"
 
 	assert.Equal(t, expected, query)
 }
