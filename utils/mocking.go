@@ -88,7 +88,7 @@ func (p MockedMessageProvider) GetMessages(participantOne string, participantTwo
 	allMessages := make([]db.Message, 0)
 
 	for receiver, messages := range p.db {
-		if receiver != participantOne { 
+		if receiver != participantOne {
 			continue
 		}
 
@@ -100,7 +100,7 @@ func (p MockedMessageProvider) GetMessages(participantOne string, participantTwo
 	}
 
 	for receiver, messages := range p.db {
-		if receiver != participantTwo { 
+		if receiver != participantTwo {
 			continue
 		}
 

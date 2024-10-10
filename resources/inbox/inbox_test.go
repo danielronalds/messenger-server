@@ -69,8 +69,7 @@ func TestGetMessagesPassing(t *testing.T) {
 		messages := make([]db.Message, 0)
 		json.Unmarshal(rec.Body.Bytes(), &messages)
 
-
-		expected := []db.Message {{
+		expected := []db.Message{{
 			Id:        0,
 			Sender:    "janesmith",
 			Receiver:  "johnsmith",
