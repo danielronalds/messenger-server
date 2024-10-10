@@ -118,6 +118,21 @@ authentication.
 
 ## Inbox Endpoint
 
+> `POST /inbox`
+
+Gets a conversation between the logged in user and the
+supplied contact. Does not return unread messages from the
+contact.
+
+**Expects**
+
+```json
+{
+ "key": "OdT7yQCl1a4xoCXc4OB1X7oSZH4q1bSpCuSEtxwLAu3YKaBd1MMwYfTVP/HbJKZJiNQKayi",
+ "contact": "jonsnow"
+}
+```
+
 > `POST /inbox/unread`
 
 Gets unread messages for all contacts.
@@ -128,3 +143,4 @@ Gets unread messages for all contacts.
 {
  "key": "OdT7yQCl1a4xoCXc4OB1X7oSZH4q1bSpCuSEtxwLAu3YKaBd1MMwYfTVP/HbJKZJiNQKayi",
 }
+```
