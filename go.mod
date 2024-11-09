@@ -3,7 +3,7 @@ module github.com/danielronalds/messenger-server
 go 1.22.7
 
 require (
-	github.com/danielronalds/slicetools v0.0.1
+	github.com/danielronalds/slicetools v0.0.2
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.12.0

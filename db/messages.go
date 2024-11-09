@@ -56,16 +56,14 @@ func (pg Postgres) ReadMessages(ids []int) ([]Message, error) {
 //
 // Split for the purpose of testing
 func constructReadMessagesQuery(ids []int) string {
-	idSelects := slicetools.MapWithIndex(ids, func(i int, id int) string {
-		if i == 0 {
-			return fmt.Sprintf("Id = %v", id)
-		}
-		return fmt.Sprintf(" OR Id = %v", id)
-	})
-
 	baseQuery := `UPDATE api.Messages SET IsRead = TRUE WHERE `
-	query := slicetools.Foldl(idSelects, baseQuery, func(prev string, next string) string {
-		return prev + next
+
+	query := slicetools.FoldlWithIndex(ids, baseQuery, func(i int, prev string, id int) string {
+		if i == 0 {
+			return prev + fmt.Sprintf("Id = %v", id)
+		}
+
+		return prev + fmt.Sprintf(" OR Id = %v", id)
 	})
 
 	query = query + " RETURNING *;"
